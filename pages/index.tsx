@@ -10,38 +10,53 @@ type Item = {
 
 const POSApp: React.FC = () => {
 
-  console.log(process.env); // 全ての環境変数を表示
-
   // FastAPI の URL を指定
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
   // console.log('API_BASE_URL:');
   // console.log(process.env.NEXT_PUBLIC_API_ENDPOINT);
 
-  //動的なGETリクエストの送信
   const [id, setId] = useState('');
   const [idResponse, setIdResponse] = useState('');
-
-  const prd_id = "12345";
-  // IDを指定してGETリクエストを送信
-  const handleIdRequest = async (e) => {
-    e.preventDefault();
-    // const res = await fetch(API_BASE_URL + `/multiply/${id}`, {
-    const res = await fetch(API_BASE_URL + `/prd/${prd_id}`, {
-        method: 'GET',
-    });
-    const data = await res.json();
-
-    console.log("リクエストの結果:", data);
-    setIdResponse(data.doubled_value);
-  };
-
-  const [scannedCode, setScannedCode] = useState<string>("");
+  const [scannedCode, setScannedCode] = useState<string>("12345");
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const [cart, setCart] = useState<Item[]>([]);
   const [total, setTotal] = useState<number>(0);
 
+  // IDを指定してGETリクエストを送信
+  const handleIdRequest = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("Scancode:",scannedCode)
+      const res = await fetch(API_BASE_URL + `/prd/${scannedCode}`, {
+          method: 'GET',
+      });
+      // ステータスコードをチェック
+      if (!res.ok) {
+        // HTTP ステータスコードによる制御
+        if (res.status === 404) {
+          console.error("エラー: データが見つかりません");
+          alert("指定された製品は現在取り扱っておりません。");
+        } else {
+          console.error("エラー: その他のエラー");
+          alert("エラーが発生しました: " + res.statusText);
+        }
+        return;
+      }
+      const data = await res.json();
+      console.log("リクエストの結果:", data);
+      console.log("name:", data.name);
+      setName(data.name);
+      setPrice(data.price);
+      setQuantity(1);
+
+    } catch (error) {
+      // ネットワークエラーやその他のエラーをキャッチ
+      console.error("例外が発生しました:", error);
+      alert("リクエストに失敗しました。ネットワークエラーの可能性があります。");
+    }
+  };
 
   // 商品情報を取得
   const handleScan = async () => {
@@ -101,15 +116,9 @@ const POSApp: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>IDを指定してGETリクエストを送信</h2>
+      <h2>スキャンコードデータの取得テスト</h2>
       <form onSubmit={handleIdRequest}>
-        <input
-          type="number"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
-          placeholder="IDを入力してください"
-        />
-        <button type="submit">送信</button>
+        <button type="submit">製品情報取得</button>
       </form>
       {idResponse && <p>FastAPIからの応答: {idResponse}</p>}
 
