@@ -15,14 +15,14 @@ const POSApp: React.FC = () => {
   // console.log('API_BASE_URL:');
   // console.log(process.env.NEXT_PUBLIC_API_ENDPOINT);
 
-  const [id, setId] = useState('');
+  // const [id, setId] = useState('');
   const [idResponse, setIdResponse] = useState('');
   const [scannedCode, setScannedCode] = useState<string>("12345");
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const [cart, setCart] = useState<Item[]>([]);
-  const [total, setTotal] = useState<number>(0);
+  // const [total, setTotal] = useState<number>(0);
 
   // IDを指定してGETリクエストを送信
   const handleIdRequest = async (e) => {
@@ -120,7 +120,7 @@ const POSApp: React.FC = () => {
       <form onSubmit={handleIdRequest}>
         <button type="submit">製品情報取得</button>
       </form>
-      {idResponse && <p>FastAPIからの応答: {idResponse}</p>}
+      {/* {idResponse && <p>FastAPIからの応答: {idResponse}</p>} */}
 
       <h1>POSアプリケーション</h1>
       {/* スキャンエリア */}
@@ -166,7 +166,7 @@ const POSApp: React.FC = () => {
       </ul>
 
       {/* 合計金額 */}
-      <h2>合計金額: ¥{total}</h2>
+      {/* <h2>合計金額: ¥{total}</h2> */}
       <button onClick={handleCheckout}>購入</button>
     </div>
   );
