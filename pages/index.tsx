@@ -25,7 +25,7 @@ const POSApp: React.FC = () => {
   // const [total, setTotal] = useState<number>(0);
 
   // IDを指定してGETリクエストを送信
-  const handleIdRequest = async (e) => {
+  const handleIdRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       console.log("Scancode:",scannedCode)
