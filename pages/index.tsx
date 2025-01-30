@@ -16,7 +16,7 @@ const POSApp: React.FC = () => {
   // console.log(process.env.NEXT_PUBLIC_API_ENDPOINT);
 
   // const [id, setId] = useState('');
-  const [idResponse, setIdResponse] = useState('');
+  // const [idResponse, setIdResponse] = useState('');
   const [scannedCode, setScannedCode] = useState<string>("12345");
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
