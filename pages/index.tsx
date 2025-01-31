@@ -12,7 +12,7 @@ const POSApp: React.FC = () => {
 
   // FastAPI の URL を指定
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT;
-  // console.log('API_BASE_URL:');
+  console.log('API_BASE_URL:',API_BASE_URL);
   // console.log(process.env.NEXT_PUBLIC_API_ENDPOINT);
 
   // const [id, setId] = useState('');
@@ -31,6 +31,7 @@ const POSApp: React.FC = () => {
       console.log("Scancode:",scannedCode)
       const res = await fetch(API_BASE_URL + `/prd/${scannedCode}`, {
           method: 'GET',
+          mode: 'cors', // CORS を明示的に有効化
       });
       // ステータスコードをチェック
       if (!res.ok) {
