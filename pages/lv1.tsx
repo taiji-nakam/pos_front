@@ -101,7 +101,7 @@ const POSApp: React.FC = () => {
   const addItemToCart = () => {
     if (!scannedCode) return;
 
-    const existingItemIndex = cart.findIndex((item) => item.prdId === scannedCode);
+    // const existingItemIndex = cart.findIndex((item) => item.prdId === scannedCode);
     // 新規商品を追加
     const newItem: Item = { prdId: prdId, code: scannedCode, name, price, quantity, totalPrice: price * quantity };
     setCart([...cart, newItem]);
