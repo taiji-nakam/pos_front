@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import 'dotenv/config';
+import Link from 'next/link';
 
 type Item = {
   id: string;
@@ -117,6 +118,13 @@ const POSApp: React.FC = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+      <div className="w-full max-w-md bg-[#FF9800] rounded-lg p-6 mb-4 shadow-md mt-4">
+          <Link href="/lv1" className="w-full">
+            <h1 className="text-2xl font-bold text-black text-center">
+              POS-Level1
+            </h1>
+          </Link>
+        </div>
       <h2>スキャンコードデータの取得テスト</h2>
       <form onSubmit={handleIdRequest}>
         <button type="submit">製品情報取得</button>
