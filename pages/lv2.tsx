@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import 'dotenv/config';
+import { Html5QrcodeScanner } from "html5-qrcode"; // ✅ QRコード & バーコード読み取り用
 
 type Item = {
   prdId: string;
@@ -29,17 +30,25 @@ const POSApp: React.FC = () => {
   // const [total, setTotal] = useState<number>(0);
 
   // IDを指定してGETリクエストを送信
-  const handleIdRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleIdRequest = async (eventOrCode: React.FormEvent | string) => {
+    let codeToFetch = scannedCode; // デフォルトは手入力値を使用
+  
+    if (typeof eventOrCode === "string") {
+      // 文字列（バーコードスキャン時）
+      codeToFetch = eventOrCode;
+    } else {
+      // フォーム送信時
+      eventOrCode.preventDefault();
+    }
+  
     try {
-      console.log("Scancode:",scannedCode)
-      const res = await fetch(API_BASE_URL + `/prd/${scannedCode}`, {
-          method: 'GET',
-          mode: 'cors', // CORS を明示的に有効化
+      console.log("Scancode:", codeToFetch);
+      const res = await fetch(API_BASE_URL + `/prd/${codeToFetch}`, {
+        method: "GET",
+        mode: "cors",
       });
-      // ステータスコードをチェック
+  
       if (!res.ok) {
-        // HTTP ステータスコードによる制御
         if (res.status === 404) {
           setName("商品がマスタ未登録です");
         } else {
@@ -48,21 +57,19 @@ const POSApp: React.FC = () => {
         }
         return;
       }
+  
       const data = await res.json();
       console.log("リクエストの結果:", data);
-      console.log("name:", data.name);
       setPrdId(data.prd_id);
       setName(data.name);
       setPrice(data.price);
       setQuantity(1);
-
+  
     } catch (error) {
-      // ネットワークエラーやその他のエラーをキャッチ
       console.error("商品コード読み込み処理に失敗しました:", error);
-      alert("商品コード読み込み処理に失敗しました。");
+      alert("商品コード読み込み処理に失敗しました。\n" + error);
     }
   };
-
   // 購入処理
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -137,46 +144,63 @@ const POSApp: React.FC = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
       <div className="card bg-white shadow-xl p-6 w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-center mb-4 text-black">POSアプリケーション</h1>
+        {/* スキャン（カメラ）ボタン */}
+        <button
+          onClick={() => {
+            const scanner = new Html5QrcodeScanner(
+              "reader",
+              { fps: 10, qrbox: 250 },
+              false
+            );
+            scanner.render(
+              (decodedText) => {
+                setScannedCode(decodedText); // スキャン結果をセット
+                handleIdRequest(decodedText); // 取得したコードで商品情報を検索
+                scanner.clear(); // スキャン後にカメラを閉じる
+              },
+              (error) => console.error("読み取りエラー:", error)
+            );
+          }}
+          className="btn btn-primary w-full h-12 text-lg text-black"
+        >
+          スキャン（カメラ）
+        </button>
   
-        {/* 商品コード入力フォーム */}
-        <form onSubmit={handleIdRequest} className="flex flex-col items-center gap-3">
-          <input
-            type="text"
-            className="input input-bordered w-full h-12 text-lg" // ✅ 文字色を明示的に黒
-            value={scannedCode}
-            onChange={(e) => setScannedCode(e.target.value)}
-            placeholder="コードを入力"
-          />
-          <button type="submit" className="btn btn-primary w-full h-12 text-lg text-black">商品コード読み込み</button>
-        </form>
+        {/* カメラリーダー（表示用） */}
+        <div id="reader" className="mt-4"></div>
   
         {/* 商品情報 */}
         <div className="mt-4 text-center bg-gray-200 p-3 rounded-lg">
-          <div className="font-semibold text-lg text-black">名称:</div> {/* ✅ 文字色を黒 */}
-          <div className="text-xl text-black">{name}</div> {/* ✅ 文字色を黒 */}
-          <div className="font-semibold text-lg mt-2 text-black">単価:</div> {/* ✅ 文字色を黒 */}
-          <div className="text-xl text-black">¥{price}</div> {/* ✅ 文字色を黒 */}
+          <div className="text-xl text-black">{scannedCode}</div>
+        </div>
+        <div className="mt-4 text-center bg-gray-200 p-3 rounded-lg">
+          <div className="text-xl text-black">{name}</div>
+        </div>
+        <div className="mt-4 text-center bg-gray-200 p-3 rounded-lg">
+          <div className="text-xl text-black">¥{price}</div>
         </div>
   
         {/* 追加ボタン */}
-        <button onClick={addItemToCart} className="btn btn-secondary w-full h-12 text-lg text-black mt-4">追加</button>
+        <button onClick={addItemToCart} className="btn btn-accent w-full h-12 text-lg text-black mt-4">
+          追加
+        </button>
   
         {/* 購入リスト */}
         <h2 className="text-2xl font-semibold mt-6 text-center text-black">購入リスト</h2>
         <ul className="mt-2 bg-gray-50 p-3 rounded-lg shadow-sm h-48 overflow-y-auto space-y-2">
           {cart.map((item, index) => (
-            <li key={`${item.prdId}-${index}`} className="p-3 border-b text-center bg-gray-100 rounded-lg">
+            <li key={`${item.prdId}-${index}`}>
               <input name="prdId" type="hidden" value={item.prdId} />
               <input name="code" type="hidden" value={item.code} />
-              <div className="text-lg text-black">{item.name} x {item.quantity}</div> {/* ✅ 文字色を黒 */}
-              <div className="text-lg font-bold text-black">¥{item.totalPrice}</div> {/* ✅ 文字色を黒 */}
+              <div className="text-xs text-black">{item.name} x{item.quantity} ¥{item.totalPrice}</div>
             </li>
           ))}
         </ul>
   
         {/* 購入ボタン */}
-        <button onClick={handleCheckout} className="btn btn-accent w-full h-12 text-lg text-black mt-4">購入</button>
+        <button onClick={handleCheckout} className="btn btn-secondary w-full h-12 text-lg text-black mt-4">
+          購入
+        </button>
       </div>
     </div>
   );
