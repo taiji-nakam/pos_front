@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -11,6 +11,7 @@
   "dependencies": {
     "daisyui": "^4.12.23",
     "dotenv": "^16.4.7",
+    "html5-qrcode": "^2.3.8",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
