@@ -143,7 +143,7 @@ const POSApp: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="card bg-white shadow-xl p-6 w-full max-w-lg">
+      <div className="card bg-white shadow-xl p-6 w-full max-w-md">
         {/* スキャン（カメラ）ボタン */}
         <button
           onClick={() => {
@@ -161,44 +161,62 @@ const POSApp: React.FC = () => {
               (error) => console.error("読み取りエラー:", error)
             );
           }}
-          className="btn btn-primary w-full h-12 text-lg text-black"
+          className="btn bg-blue-300 text-black w-full h-12 text-lg border-2 border-black rounded-none
+                     hover:bg-blue-600 hover:text-white"
         >
           スキャン（カメラ）
         </button>
   
-        {/* カメラリーダー（表示用） */}
-        <div id="reader" className="mt-4"></div>
-  
-        {/* 商品情報 */}
-        <div className="mt-4 text-center bg-gray-200 p-3 rounded-lg">
-          <div className="text-xl text-black">{scannedCode}</div>
-        </div>
-        <div className="mt-4 text-center bg-gray-200 p-3 rounded-lg">
-          <div className="text-xl text-black">{name}</div>
-        </div>
-        <div className="mt-4 text-center bg-gray-200 p-3 rounded-lg">
-          <div className="text-xl text-black">¥{price}</div>
-        </div>
+        {/* 商品情報入力 */}
+        <input
+          type="text"
+          value={scannedCode}
+          readOnly
+          className="input input-bordered w-full text-center mt-4 bg-gray-200 text-lg"
+        />
+        <input
+          type="text"
+          value={name}
+          readOnly
+          className="input input-bordered w-full text-center mt-2 bg-gray-200 text-lg"
+        />
+        <input
+          type="text"
+          value={`¥${price}`}
+          readOnly
+          className="input input-bordered w-full text-center mt-2 bg-gray-200 text-lg"
+        />
   
         {/* 追加ボタン */}
-        <button onClick={addItemToCart} className="btn btn-accent w-full h-12 text-lg text-black mt-4">
+        <button
+          onClick={addItemToCart}
+          className="btn bg-blue-300 w-full h-12 text-lg text-black mt-4 border-2 border-black rounded-none
+                     hover:bg-blue-600 hover:text-white"
+        >
           追加
         </button>
   
         {/* 購入リスト */}
-        <h2 className="text-2xl font-semibold mt-6 text-center text-black">購入リスト</h2>
-        <ul className="mt-2 bg-gray-50 p-3 rounded-lg shadow-sm h-48 overflow-y-auto space-y-2">
-          {cart.map((item, index) => (
-            <li key={`${item.prdId}-${index}`}>
-              <input name="prdId" type="hidden" value={item.prdId} />
-              <input name="code" type="hidden" value={item.code} />
-              <div className="text-xs text-black">{item.name} x{item.quantity} ¥{item.totalPrice}</div>
-            </li>
-          ))}
-        </ul>
+        <h2 className="text-lg font-semibold mt-6 text-center text-black">購入リスト</h2>
+        <div className="mt-2 bg-gray-50 p-3 rounded-lg shadow-sm border border-gray-300 h-48 overflow-y-auto">
+          <ul className="space-y-1">
+            {cart.map((item, index) => (
+              <li key={`${item.prdId}-${index}`} className="flex justify-between text-sm text-black">
+                <input name="prdId" type="hidden" value={item.prdId} />
+                <input name="code" type="hidden" value={item.code} />
+                <span>{item.name} x{item.quantity}</span>
+                <span>¥{item.totalPrice}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
   
         {/* 購入ボタン */}
-        <button onClick={handleCheckout} className="btn btn-secondary w-full h-12 text-lg text-black mt-4">
+        <button
+          onClick={handleCheckout}
+          className="btn bg-blue-300 text-black w-full h-12 text-lg border-2 border-black rounded-none mt-4
+                     hover:bg-blue-600 hover:text-white"
+        >
           購入
         </button>
       </div>
