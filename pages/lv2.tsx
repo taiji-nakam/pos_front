@@ -165,14 +165,28 @@ const POSApp: React.FC = () => {
         <div id="reader" className="mt-4"></div>
   
         {/* 商品情報 */}
-        <div className="input input-bordered w-full text-center mt-4 bg-gray-200 text-lg">
-          <div className="text-xl text-black">{scannedCode}</div>
+        <div className="w-full mt-4 bg-gray-200 text-lg flex items-center justify-center h-12 rounded-lg border-none">
+          <span
+            className="text-base text-black no-underline break-all select-none"
+            style={{ userSelect: "none" }} // ユーザー選択不可に
+            {...({ autoCapitalize: "off", autoCorrect: "off", spellCheck: "false" } as React.HTMLAttributes<HTMLSpanElement>)} // 型エラーを防ぐ
+          >
+            {scannedCode}
+          </span>
         </div>
-        <div className="input input-bordered w-full text-center mt-2 bg-gray-200 text-lg">
-          <div className="text-xl text-black">{name}</div>
+        <div className="w-full mt-2 bg-gray-200 text-lg flex items-center justify-center h-12 rounded-lg border-none">
+          <span
+            className="text-base text-black no-underline break-all select-none"
+            style={{ userSelect: "none", whiteSpace: "pre-wrap" }} // 住所認識防止
+            {...({ autoCapitalize: "off", autoCorrect: "off", spellCheck: "false" } as React.HTMLAttributes<HTMLSpanElement>)}
+          >
+            {name}
+          </span>
         </div>
-        <div className="input input-bordered w-full text-center mt-2 bg-gray-200 text-lg">
-          <div className="text-xl text-black">¥{price}</div>
+        <div className="w-full mt-2 bg-gray-200 text-lg flex items-center justify-center h-12 rounded-lg border-none">
+          <span className="text-base text-black select-none" style={{ userSelect: "none" }}>
+            ¥{price.toLocaleString()}
+          </span>
         </div>
   
         {/* 追加ボタン */}
