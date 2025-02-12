@@ -264,14 +264,14 @@ const POSApp: React.FC = () => {
           value={scannedCode}
           onChange={(e) => setScannedCode(e.target.value)}
           onBlur={() => handleIdRequest(scannedCode)}
-          className="input input-bordered w-full text-center mt-4 bg-white text-lg"
+          className="input input-bordered w-full text-center mt-4 text-black bg-white text-lg"
           placeholder="商品コードを入力"
         />
         <input
           type="text"
           value={name}
           readOnly
-          className="input input-bordered w-full text-center mt-2 bg-gray-200 text-lg"
+          className="input input-bordered w-full text-center mt-2 text-black bg-gray-200 text-lg"
         />
   
         {/* 単価・数量エリア */}
@@ -280,7 +280,7 @@ const POSApp: React.FC = () => {
             type="text"
             value={`¥${price.toLocaleString()}`}
             readOnly
-            className="input input-bordered w-1/2 text-center bg-gray-200 text-lg"
+            className="input input-bordered w-1/2 text-center text-black bg-gray-200 text-lg"
           />
           <input
             type="number"
@@ -291,7 +291,7 @@ const POSApp: React.FC = () => {
             }}
             min="0"
             max="99"
-            className="input input-bordered w-1/2 text-center bg-white text-lg"
+            className="input input-bordered w-1/2 text-center text-black bg-white text-lg"
             placeholder="数量"
           />
         </div>
