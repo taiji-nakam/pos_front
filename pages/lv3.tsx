@@ -289,7 +289,7 @@ const POSApp: React.FC = () => {
               const newQuantity = Math.max(0, Math.min(99, Number(e.target.value))); // 0〜99に制限
               setQuantity(newQuantity);
             }}
-            min="0"
+            min="1"
             max="99"
             className="input input-bordered w-1/2 text-center text-black bg-white text-lg"
             placeholder="数量"
