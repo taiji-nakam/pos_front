@@ -37,7 +37,7 @@ const POSApp: React.FC = () => {
       }
     };
     fetchTax();
-  }, [setTax]);
+  }, [API_BASE_URL, setTax]);
 
   // IDを指定してGETリクエストを送信
   const handleIdRequest = async (eventOrCode: React.FormEvent | string) => {
@@ -201,7 +201,7 @@ const POSApp: React.FC = () => {
             <li key={`${item.prdId}-${index}`}>
               <input name="prdId" type="hidden" value={item.prdId} />
               <input name="code" type="hidden" value={item.code} />
-              <div className="text-xs text-black">{item.name} x{item.quantity} ¥{item.totalPrice.toLocaleString()}</div>
+              <div className="text-xs text-black">{item.name} x{item.quantity} {item.price.toLocaleString()}円 {item.totalPrice.toLocaleString()}円</div>
             </li>
           ))}
         </ul>

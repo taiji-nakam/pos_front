@@ -132,6 +132,13 @@ const POSApp: React.FC = () => {
           </h1>
         </Link>
       </div>
+      <div className="w-full max-w-md bg-[#FF9800] rounded-lg p-6 mb-4 shadow-md mt-4">
+        <Link href="/lv3" className="w-full">
+          <h1 className="text-2xl font-bold text-black text-center">
+            POS-Level3
+          </h1>
+        </Link>
+      </div>
       <h2>スキャンコードデータの取得テスト</h2>
       <form onSubmit={handleIdRequest}>
         <button type="submit">製品情報取得</button>
