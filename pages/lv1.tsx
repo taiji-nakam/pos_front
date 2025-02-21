@@ -45,10 +45,14 @@ const POSApp: React.FC = () => {
           throw new Error(data.detail || "IP制限によりアクセスできません");
         }
         console.log("アクセス許可済み IP:", data.ip);
-      } catch (error: any) {
-        console.error("アクセス制限:", error.message);
+      } catch (error: unknown) {
+        let errorMessage = "不明なエラーが発生しました";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        console.error("アクセス制限:", errorMessage);
         // alert(error.message); // アラートでエラーメッセージを表示
-        setErrorMsg(error.message);
+        setErrorMsg(errorMessage);
         setIsAllowed(false); // アクセス禁止状態にする
       } finally {
         setIsLoading(false); // ローディング終了
