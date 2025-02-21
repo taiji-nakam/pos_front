@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import 'dotenv/config';
 
 type Item = {
@@ -28,7 +28,49 @@ const POSApp: React.FC = () => {
   const [cart, setCart] = useState<Item[]>([]);
   // const [total, setTotal] = useState<number>(0);
 
-  // IDを指定してGETリクエストを送信
+  const [isAllowed, setIsAllowed] = useState<boolean>(true); // アクセス許可状態
+  const [isLoading, setIsLoading] = useState<boolean>(true); // ローディング状態
+  const [errorMsg, setErrorMsg] = useState<string | null>(null); // クライアントIPアドレス
+
+  // IP制御：FastAPI の `/api/get-ip` を呼び出し、許可されているか確認
+  useEffect(() => {
+    const checkAccess = async () => {
+      try {
+        const res = await fetch(API_BASE_URL + `/client-ip/`, {
+          method: 'GET',
+          mode: 'cors', // CORS を明示的に有効化
+      });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || "IP制限によりアクセスできません");
+        }
+        console.log("アクセス許可済み IP:", data.ip);
+      } catch (error: any) {
+        console.error("アクセス制限:", error.message);
+        // alert(error.message); // アラートでエラーメッセージを表示
+        setErrorMsg(error.message);
+        setIsAllowed(false); // アクセス禁止状態にする
+      } finally {
+        setIsLoading(false); // ローディング終了
+      }
+    };
+
+    checkAccess();
+  }, []);
+  // lodingPage
+  if (isLoading) {
+    return <div className="text-center p-6 text-xl">読み込み中...</div>;
+  }
+  // アクセス不可Page
+  if (!isAllowed) {
+    return (
+      <div className="text-center p-6 text-xl text-red-600">
+        お使いのデバイスではアクセスできません<br />（{errorMsg}）
+      </div>
+    );
+  }
+
+  // 商品データの取得
   const handleIdRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
