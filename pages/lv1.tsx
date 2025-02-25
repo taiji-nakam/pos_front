@@ -45,10 +45,12 @@ const POSApp: React.FC = () => {
   
         // 取得したIPを FastAPI (`API_BASE_URL + /client-ip/`) に送信し、許可を確認
         console.log(API_BASE_URL + `/client-ip/`);
-        const res = await fetch(API_BASE_URL + `/client-ip/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ip: clientIp }), // IPを送信
+        // const res = await fetch(API_BASE_URL + `/client-ip/`, {
+        const res = await fetch(API_BASE_URL + `/client-ip/${clientIp}`, {
+          // method: "POST",
+          // headers: { "Content-Type": "application/json" },
+          // body: JSON.stringify({ ip: clientIp }), // IPを送信
+          method:"GET",
           mode: 'cors', // CORS を明示的に有効化
         });
   
