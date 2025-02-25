@@ -48,6 +48,7 @@ const POSApp: React.FC = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ip: clientIp }), // IPを送信
+          mode: 'cors', // CORS を明示的に有効化
         });
   
         const data = await res.json();
