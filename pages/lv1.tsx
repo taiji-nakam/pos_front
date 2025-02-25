@@ -31,37 +31,49 @@ const POSApp: React.FC = () => {
   const [isAllowed, setIsAllowed] = useState<boolean>(true); // アクセス許可状態
   const [isLoading, setIsLoading] = useState<boolean>(true); // ローディング状態
   const [errorMsg, setErrorMsg] = useState<string | null>(null); // クライアントIPアドレス
-
-  // IP制御：FastAPI の `/api/get-ip` を呼び出し、許可されているか確認
+  // const [clientIp, setClientIp] = useState<string | null>(null); // クライアントIP
+  
   useEffect(() => {
     const checkAccess = async () => {
       try {
-        const res = await fetch(API_BASE_URL + `/client-ip/`, {
-          method: 'GET',
-          mode: 'cors', // CORS を明示的に有効化
-      });
+        // Next.js の API `/api/get-ip` からクライアントのIPを取得
+        const ipRes = await fetch("/api/get-ip");
+        if (!ipRes.ok) throw new Error(`IP取得エラー: ${ipRes.status}`);
+        const ipData = await ipRes.json();
+        const clientIp = ipData.ip;
+        console.log("取得したクライアントIP:", clientIp);
+  
+        // 取得したIPを FastAPI (`API_BASE_URL + /client-ip/`) に送信し、許可を確認
+        const res = await fetch(`${API_BASE_URL}/client-ip/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ip: clientIp }), // IPを送信
+        });
+  
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.detail || "IP制限によりアクセスできません");
         }
-        console.log("アクセス許可済み IP:", data.ip);
+  
+        console.log("アクセス許可済み IP:", clientIp);
       } catch (error: unknown) {
         let errorMessage = "不明なエラーが発生しました";
         if (error instanceof Error) {
           errorMessage = error.message;
         }
         console.error("アクセス制限:", errorMessage);
-        // alert(error.message); // アラートでエラーメッセージを表示
         setErrorMsg(errorMessage);
         setIsAllowed(false); // アクセス禁止状態にする
       } finally {
         setIsLoading(false); // ローディング終了
       }
     };
-
+  
     checkAccess();
   }, []);
-  // lodingPage
+  
+
+
   if (isLoading) {
     return <div className="text-center p-6 text-xl">読み込み中...</div>;
   }
@@ -157,28 +169,6 @@ const POSApp: React.FC = () => {
     setPrice(0);
     setQuantity(1);
   };
-
-  // 購入リストに追加（重複はインクリするバージョン）
-  // const addItemToCart = () => {
-  //   if (!scannedCode) return;
-
-  //   const existingItemIndex = cart.findIndex((item) => item.id === scannedCode);
-  //   if (existingItemIndex !== -1) {
-  //     // 既存商品の数量を更新
-  //     const updatedCart = [...cart];
-  //     updatedCart[existingItemIndex].quantity += quantity;
-  //     setCart(updatedCart);
-  //   } else {
-  //     // 新規商品を追加
-  //     const newItem: Item = { id: scannedCode, name, price, quantity };
-  //     setCart([...cart, newItem]);
-  //   }
-
-  //   setScannedCode("");
-  //   setName("");
-  //   setPrice(0);
-  //   setQuantity(1);
-  // };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
