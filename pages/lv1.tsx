@@ -44,6 +44,7 @@ const POSApp: React.FC = () => {
         console.log("取得したクライアントIP:", clientIp);
   
         // 取得したIPを FastAPI (`API_BASE_URL + /client-ip/`) に送信し、許可を確認
+        console.log(API_BASE_URL + `/client-ip/`);
         const res = await fetch(API_BASE_URL + `/client-ip/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
